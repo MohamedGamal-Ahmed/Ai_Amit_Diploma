@@ -1,0 +1,12 @@
+{
+  "doctors": [],
+  "patients": [
+    {
+      "name": "test",
+      "age": 30,
+      "condition": "test",
+      "room_number": 3,
+      "procedures": {}
+    }
+  ]
+}
