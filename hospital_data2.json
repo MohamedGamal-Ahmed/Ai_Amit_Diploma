@@ -1,0 +1,64 @@
+{
+  "patients": [
+    {
+      "name": "John Doe",
+      "age": 45,
+      "condition": "Heart surgery",
+      "room_number": 1,
+      "procedures": {
+        "surgery": 1000,
+        "medication": 300,
+        "ICU": 1000
+      }
+    },
+    {
+      "name": "Jane Smith",
+      "age": 60,
+      "condition": "Pneumonia",
+      "room_number": 2,
+      "procedures": {
+        "medication": 500,
+        "room": 500
+      }
+    },
+    {
+      "name": "ali",
+      "age": 30,
+      "condition": "surgery",
+      "room_number": 3,
+      "procedures": {}
+    },
+    {
+      "name": "ahmed",
+      "age": 30,
+      "condition": "suger",
+      "room_number": 4,
+      "procedures": {}
+    }
+  ],
+  "doctors": [
+{
+  "doctors": [
+    {"name": "Dr. Ahmed", "age": 45, "specialty": "Cardiology"},
+    {"name": "Dr. Rana", "age": 38, "specialty": "Neurology"}
+  ]
+}
+  ],
+  "nurses": [
+    {
+      "name": "Nurse Olivia",
+      "age": 30,
+      "role": "ICU Nurse"
+    },
+    {
+      "name": "Nurse Liam",
+      "age": 28,
+      "role": "Ward Nurse"
+    },
+    {
+      "name": "Nurse Sophia",
+      "age": 35,
+      "role": "Surgical Assistant"
+    }
+  ]
+}

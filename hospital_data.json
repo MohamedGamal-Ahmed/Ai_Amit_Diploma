@@ -1,0 +1,10 @@
+{
+  "patients": [
+    {"name": "Alice", "age": 30, "medical_record": "No known allergies"},
+    {"name": "Bob", "age": 45, "medical_record": "Diabetic"}
+  ],
+  "staff": [
+    {"name": "Dr. Smith", "age": 50, "position": "Cardiologist"},
+    {"name": "Nurse Jane", "age": 32, "position": "Nurse"}
+  ]
+}
