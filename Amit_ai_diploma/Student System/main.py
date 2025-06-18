@@ -97,7 +97,7 @@ def core():
             break
         else :
             print("invalid choice .")
-            print("\n ", + "=" *40)
+            print("\n ",  "=" *40)
 
 if __name__ == "__main__":
     core ()
