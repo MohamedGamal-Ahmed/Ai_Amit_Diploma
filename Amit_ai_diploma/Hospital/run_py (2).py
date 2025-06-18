@@ -84,7 +84,7 @@ def run_batch_operations(system):
         room = os.environ.get('PATIENT_ROOM')
         
         # Add patient programmatically
-        from hospital_system import Patient
+        from hospital_system_py import Patient
         patient = Patient(name, age, condition)
         system.patients.append(patient)
         system.emergency.add_patient(patient)
@@ -100,7 +100,7 @@ def run_batch_operations(system):
         specialty = os.environ.get('DOCTOR_SPECIALTY', 'General Practice')
         
         # Add doctor programmatically
-        from hospital_system import Doctor
+        from hospital_system_py import Doctor
         doctor = Doctor(name, age, specialty)
         system.doctors.append(doctor)
         
