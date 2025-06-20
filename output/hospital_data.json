@@ -1,0 +1,18 @@
+{
+  "doctors": [
+    {
+      "name": "mohamed gamal",
+      "age": 50,
+      "specialty": "test"
+    }
+  ],
+  "patients": [
+    {
+      "name": "mohamed",
+      "age": 35,
+      "condition": "test",
+      "room_number": 1,
+      "procedures": {}
+    }
+  ]
+}
