@@ -98,6 +98,7 @@ class ReportsTab:
             ("واردة هذا الشهر", self.get_monthly_incoming_count(datetime.now().strftime('%Y-%m')), "#9b59b6", "🗓️"),
             ("صادرة هذا الشهر", self.get_monthly_outgoing_count(datetime.now().strftime('%Y-%m')), "#1abc9c", "🗓️"),
             ("متابعات مكتملة", self.get_completed_followups_count(), "#27ae60", "✅"),
+            ("متابعات جارية", self.get_ongoing_followups_count(), "#3498db", "🔄"),
             ("مراسلات مؤرشفة", self.get_archived_count(), "#95a5a6", "🗄️"),
         ]
 
@@ -176,6 +177,7 @@ class ReportsTab:
             ('المراسلات الواردة', self.get_incoming_count(), self.get_monthly_incoming_count(current_month)),
             ('المراسلات الصادرة', self.get_outgoing_count(), self.get_monthly_outgoing_count(current_month)),
             ('المتابعات المعلقة', self.get_pending_followups_count(), 0),
+            ('المتابعات الجارية', self.get_ongoing_followups_count(), 0),
             ('المتابعات المكتملة', self.get_completed_followups_count(), 0),
         ]
         
@@ -270,6 +272,14 @@ class ReportsTab:
             command=self.generate_followup_report
         )
         generate_btn.pack(side='right', padx=10)
+        
+        # زر تقرير الموضوعات المغلقة والجارية
+        status_report_btn = ttk.Button(
+            control_frame,
+            text="تقرير الموضوعات المغلقة والجارية",
+            command=self.generate_status_report
+        )
+        status_report_btn.pack(side='right', padx=5)
         
         # إطار التقرير
         self.followup_report_frame = ttk.Frame(followup_frame)
@@ -765,3 +775,162 @@ class ReportsTab:
                 messagebox.showinfo("نجح", "تم تصدير التقرير بنجاح")
             except Exception as e:
                 messagebox.showerror("خطأ", f"فشل في تصدير التقرير: {e}")
+    
+    def generate_status_report(self):
+        """إنشاء تقرير الموضوعات المغلقة والجارية"""
+        # مسح المحتوى السابق
+        for widget in self.followup_report_frame.winfo_children():
+            widget.destroy()
+        
+        # عنوان التقرير
+        title_label = tk.Label(
+            self.followup_report_frame,
+            text="تقرير الموضوعات المغلقة والجارية",
+            font=self.font_large,
+            fg='#2c3e50'
+        )
+        title_label.pack(pady=10)
+        
+        # إطار الإحصائيات السريعة
+        stats_frame = tk.Frame(self.followup_report_frame, bg='#f8f9fa')
+        stats_frame.pack(fill='x', padx=20, pady=10)
+        
+        # بطاقات الإحصائيات
+        closed_count = self.get_closed_followups_count()
+        ongoing_count = self.get_ongoing_followups_count()
+        pending_count = self.get_pending_followups_count()
+        total_count = closed_count + ongoing_count + pending_count
+        
+        # بطاقة الموضوعات المغلقة
+        closed_card = tk.Frame(stats_frame, bg='#27ae60', relief='raised', bd=2)
+        closed_card.pack(side='left', fill='both', expand=True, padx=5)
+        
+        tk.Label(closed_card, text="✅", font=('Arial Unicode MS', 24), bg='#27ae60', fg='white').pack(pady=(10, 0))
+        tk.Label(closed_card, text=str(closed_count), font=('Arial Unicode MS', 20, 'bold'), bg='#27ae60', fg='white').pack()
+        tk.Label(closed_card, text="موضوعات مغلقة", font=('Arial Unicode MS', 10, 'bold'), bg='#27ae60', fg='white').pack(pady=(0, 10))
+        
+        # بطاقة الموضوعات الجارية
+        ongoing_card = tk.Frame(stats_frame, bg='#3498db', relief='raised', bd=2)
+        ongoing_card.pack(side='left', fill='both', expand=True, padx=5)
+        
+        tk.Label(ongoing_card, text="🔄", font=('Arial Unicode MS', 24), bg='#3498db', fg='white').pack(pady=(10, 0))
+        tk.Label(ongoing_card, text=str(ongoing_count), font=('Arial Unicode MS', 20, 'bold'), bg='#3498db', fg='white').pack()
+        tk.Label(ongoing_card, text="موضوعات جارية", font=('Arial Unicode MS', 10, 'bold'), bg='#3498db', fg='white').pack(pady=(0, 10))
+        
+        # بطاقة الموضوعات المعلقة
+        pending_card = tk.Frame(stats_frame, bg='#e67e22', relief='raised', bd=2)
+        pending_card.pack(side='left', fill='both', expand=True, padx=5)
+        
+        tk.Label(pending_card, text="⏳", font=('Arial Unicode MS', 24), bg='#e67e22', fg='white').pack(pady=(10, 0))
+        tk.Label(pending_card, text=str(pending_count), font=('Arial Unicode MS', 20, 'bold'), bg='#e67e22', fg='white').pack()
+        tk.Label(pending_card, text="موضوعات معلقة", font=('Arial Unicode MS', 10, 'bold'), bg='#e67e22', fg='white').pack(pady=(0, 10))
+        
+        # جدول تفصيلي للموضوعات
+        table_frame = ttk.LabelFrame(self.followup_report_frame, text="تفاصيل الموضوعات")
+        table_frame.pack(fill='both', expand=True, padx=20, pady=10)
+        
+        # إنشاء الجدول
+        columns = ('status', 'reference', 'subject', 'responsible', 'date', 'action')
+        tree = ttk.Treeview(table_frame, columns=columns, show='headings', height=15)
+        
+        # تعريف العناوين
+        tree.heading('status', text='الحالة')
+        tree.heading('reference', text='رقم المراسلة')
+        tree.heading('subject', text='الموضوع')
+        tree.heading('responsible', text='المسؤول')
+        tree.heading('date', text='تاريخ المتابعة')
+        tree.heading('action', text='الإجراء المطلوب')
+        
+        # تعيين عرض الأعمدة
+        tree.column('status', width=80, anchor='center')
+        tree.column('reference', width=120, anchor='center')
+        tree.column('subject', width=200, anchor='e')
+        tree.column('responsible', width=120, anchor='center')
+        tree.column('date', width=100, anchor='center')
+        tree.column('action', width=200, anchor='e')
+        
+        # تعيين ألوان للحالات
+        tree.tag_configure('مغلق', background='#d5f4e6', foreground='#27ae60')
+        tree.tag_configure('جاري', background='#d6eaf8', foreground='#3498db')
+        tree.tag_configure('معلق', background='#fdeaa7', foreground='#e67e22')
+        
+        # جلب البيانات
+        query = """
+            SELECT f.status, f.follow_up_date, f.action_required, f.responsible_person,
+                   CASE 
+                       WHEN f.correspondence_type = 'incoming' THEN ic.reference_number
+                       WHEN f.correspondence_type = 'outgoing' THEN oc.reference_number
+                   END as reference_number,
+                   CASE 
+                       WHEN f.correspondence_type = 'incoming' THEN ic.subject
+                       WHEN f.correspondence_type = 'outgoing' THEN oc.subject
+                   END as subject
+            FROM follow_up f
+            LEFT JOIN incoming_correspondence ic ON f.correspondence_type = 'incoming' AND f.correspondence_id = ic.id
+            LEFT JOIN outgoing_correspondence oc ON f.correspondence_type = 'outgoing' AND f.correspondence_id = oc.id
+            ORDER BY 
+                CASE f.status 
+                    WHEN 'جاري' THEN 1 
+                    WHEN 'معلق' THEN 2 
+                    WHEN 'مغلق' THEN 3 
+                    ELSE 4 
+                END,
+                f.follow_up_date DESC
+        """
+        
+        results = self.db_manager.execute_query(query)
+        
+        for row in results:
+            status = row['status'] if row['status'] else 'غير محدد'
+            reference = row['reference_number'] if row['reference_number'] else 'غير محدد'
+            subject = row['subject'] if row['subject'] else 'غير محدد'
+            responsible = row['responsible_person'] if row['responsible_person'] else 'غير محدد'
+            date = row['follow_up_date'] if row['follow_up_date'] else 'غير محدد'
+            action = row['action_required'] if row['action_required'] else 'غير محدد'
+            
+            # تحديد اللون حسب الحالة
+            tag = status if status in ['مغلق', 'جاري', 'معلق'] else 'default'
+            
+            tree.insert('', 'end', values=(
+                status, reference, subject, responsible, date, action
+            ), tags=(tag,))
+        
+        # شريط التمرير
+        scrollbar = ttk.Scrollbar(table_frame, orient='vertical', command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        
+        # التخطيط
+        tree.pack(side='left', fill='both', expand=True)
+        scrollbar.pack(side='right', fill='y')
+        
+        # إطار الملخص
+        summary_frame = ttk.LabelFrame(self.followup_report_frame, text="ملخص التقرير")
+        summary_frame.pack(fill='x', padx=20, pady=10)
+        
+        summary_text = f"""
+        📊 إجمالي الموضوعات: {total_count}
+        ✅ موضوعات مغلقة: {closed_count} ({(closed_count/total_count*100):.1f}% من الإجمالي)
+        🔄 موضوعات جارية: {ongoing_count} ({(ongoing_count/total_count*100):.1f}% من الإجمالي)
+        ⏳ موضوعات معلقة: {pending_count} ({(pending_count/total_count*100):.1f}% من الإجمالي)
+        
+        📈 معدل الإنجاز: {(closed_count/total_count*100):.1f}%
+        """ if total_count > 0 else "لا توجد موضوعات للمتابعة حالياً"
+        
+        summary_label = tk.Label(
+            summary_frame,
+            text=summary_text,
+            font=self.font_normal,
+            justify='right',
+            anchor='e'
+        )
+        summary_label.pack(padx=10, pady=10)
+    
+    def get_closed_followups_count(self):
+        """عدد المتابعات المغلقة"""
+        result = self.db_manager.execute_query("SELECT COUNT(*) as count FROM follow_up WHERE status = 'مغلق'")
+        return result[0]['count'] if result else 0
+    
+    def get_ongoing_followups_count(self):
+        """عدد المتابعات الجارية"""
+        result = self.db_manager.execute_query("SELECT COUNT(*) as count FROM follow_up WHERE status = 'جاري'")
+        return result[0]['count'] if result else 0

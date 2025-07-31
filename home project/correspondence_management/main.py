@@ -10,7 +10,7 @@ Correspondence Management System
 
 import tkinter as tk
 from tkinter import ttk, messagebox
-import sqlite3
+import sqlite3    #
 import hashlib
 from datetime import datetime
 import os
