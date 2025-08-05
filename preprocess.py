@@ -4,3 +4,13 @@ def dtypes_and_unique(df):
     n_uniq = df.nunique()  # Count the number of unique values in each column
     
     return pd.DataFrame({'dtypes': dtypes, 'n_uniq': n_uniq}) .T  # Create a new DataFrame with the data types and number of unique values of each column
+
+
+
+
+def is_null (df):
+    null = df. isnull() .sum()  # Count the number of null values in each column of the DataFrame
+    ratio = (null/ df.shape[0]) *100
+    pd.DataFrame({'null': null, 'ratio': ratio}) .T # Create a new DataFrame with the count and ratio of null values in each column
+
+    return pd.DataFrame({'null': null, 'ratio': ratio}) .T  # Create a new DataFrame with the count and ratio of null values in each column
