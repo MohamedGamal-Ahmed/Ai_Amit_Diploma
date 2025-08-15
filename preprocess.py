@@ -14,3 +14,5 @@ def is_null (df):
     pd.DataFrame({'null': null, 'ratio': ratio}) .T # Create a new DataFrame with the count and ratio of null values in each column
 
     return pd.DataFrame({'null': null, 'ratio': ratio}) .T  # Create a new DataFrame with the count and ratio of null values in each column
+
+
