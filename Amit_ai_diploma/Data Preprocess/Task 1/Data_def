@@ -1,0 +1,134 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#------------------------------
+# 1. فلترة البيانات
+#------------------------------
+def filter_data(data, condition):
+    field, op, value = condition.split(" ")
+    try:
+        value = float(value)
+    except:
+        value = value.strip("\'\"")
+
+    if op == ">":
+        matches = data[field] > value
+    elif op == "<":
+        matches = data[field] < value
+    elif op == ">=":
+        matches = data[field] >= value
+    elif op == "<=":
+        matches = data[field] <= value
+    elif op == "==":
+        matches = data[field] == value
+    elif op == "!=":
+        matches = data[field] != value
+    else:
+        raise Exception("Invalid comparison operator. Only >, <, >=, <=, ==, != allowed.")
+
+    return data[matches].reset_index(drop=True)
+
+#------------------------------
+# 2. تجهيز البيانات
+#------------------------------
+def prepare_data(data, outcomes, filters):
+    if isinstance(outcomes, pd.Series):
+        outcomes = outcomes.to_frame(name='Survived')
+    elif 'Survived' not in outcomes.columns:
+        outcomes.columns = ['Survived']
+
+    all_data = pd.concat([data, outcomes], axis=1)
+
+    for condition in filters:
+        all_data = filter_data(all_data, condition)
+
+    return all_data
+
+#------------------------------
+# 3. رسم الخصائص العددية
+#------------------------------
+def plot_numeric(all_data, key):
+    all_data = all_data[~np.isnan(all_data[key])]
+
+    if key == 'Fare':
+        bins = np.arange(0, all_data['Fare'].max() + 20, 20)
+    elif key == 'Age':
+        bins = np.arange(0, all_data['Age'].max() + 10, 10)
+    else:
+        bins = 10  # default
+
+    nonsurv_vals = all_data[all_data['Survived'] == 0][key].reset_index(drop=True)
+    surv_vals = all_data[all_data['Survived'] == 1][key].reset_index(drop=True)
+
+    plt.hist(nonsurv_vals, bins=bins, alpha=0.6, color='red', label='Did not survive')
+    plt.hist(surv_vals, bins=bins, alpha=0.6, color='green', label='Survived')
+    plt.xlim(0, bins if isinstance(bins, int) else bins.max())
+    plt.legend(framealpha=0.8)
+
+#------------------------------
+# 4. رسم الخصائص الفئوية
+#------------------------------
+def plot_categorical(all_data, key):
+    if key == 'Pclass':
+        values = np.arange(1, 4)
+    elif key in ['Parch', 'SibSp']:
+        values = np.arange(0, np.max(all_data[key]) + 1)
+    elif key == 'Embarked':
+        values = ['C', 'Q', 'S']
+    elif key == 'Sex':
+        values = ['male', 'female']
+    else:
+        values = all_data[key].unique()
+
+    frame = pd.DataFrame(index=np.arange(len(values)), columns=[key, 'Survived', 'NSurvived'])
+
+    for i, value in enumerate(values):
+        frame.loc[i] = [
+            value,
+            len(all_data[(all_data['Survived'] == 1) & (all_data[key] == value)]),
+            len(all_data[(all_data['Survived'] == 0) & (all_data[key] == value)])
+        ]
+
+    bar_width = 0.4
+    for i in np.arange(len(frame)):
+        plt.bar(i - bar_width, int(frame.loc[i]['NSurvived']), width=bar_width, color='r')
+        plt.bar(i, int(frame.loc[i]['Survived']), width=bar_width, color='g')
+
+    plt.xticks(np.arange(len(frame)), values)
+    plt.legend(('Did not survive', 'Survived'), framealpha=0.8)
+
+#------------------------------
+# 5. الفانكشن الرئيسية
+#------------------------------
+def survival_stats(data, outcomes, key, filters=[]):
+    if key not in data.columns.values:
+        print(f"'{key}' is not a feature of the Titanic data.")
+        return False
+
+    if key in ['Cabin', 'PassengerId', 'Ticket']:
+        print(f"'{key}' has too many unique categories to display! Try a different feature.")
+        return False
+
+    all_data = prepare_data(data, outcomes, filters)
+    all_data = all_data[[key, 'Survived']]
+
+    plt.figure(figsize=(8, 6))
+
+    if key in ['Age', 'Fare']:
+        plot_numeric(all_data, key)
+    else:
+        plot_categorical(all_data, key)
+
+    plt.xlabel(key)
+    plt.ylabel('Number of Passengers')
+    plt.title(f"Passenger Survival Statistics With '{key}' Feature")
+    plt.show()
+
+    if all_data[key].isnull().sum():
+        nan_outcomes = all_data[all_data[key].isnull()]['Survived']
+        print(f"Passengers with missing '{key}' values: {len(nan_outcomes)} "
+              f"({sum(nan_outcomes == 1)} survived, {sum(nan_outcomes == 0)} did not survive)")

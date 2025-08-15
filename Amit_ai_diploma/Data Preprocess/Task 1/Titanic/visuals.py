@@ -1,0 +1,161 @@
+###########################################
+# Suppress matplotlib user warnings
+# Necessary for newer version of matplotlib
+import warnings
+warnings.filterwarnings("ignore", category = UserWarning, module = "matplotlib")
+#
+# Display inline matplotlib plots with IPython
+from IPython import get_ipython
+get_ipython().run_line_magic('matplotlib', 'inline')
+###########################################
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def filter_data(data, condition):
+    """
+    Remove elements that do not match the condition provided.
+    Takes a data list as input and returns a filtered list.
+    Conditions should be a list of strings of the following format:
+      '<field> <op> <value>'
+    where the following operations are valid: >, <, >=, <=, ==, !=
+    
+    Example: ["Sex == 'male'", 'Age < 18']
+    """
+
+    field, op, value = condition.split(" ")
+    
+    # convert value into number or strip excess quotes if string
+    try:
+        value = float(value)
+    except:
+        value = value.strip("\'\"")
+    
+    # get booleans for filtering
+    if op == ">":
+        matches = data[field] > value
+    elif op == "<":
+        matches = data[field] < value
+    elif op == ">=":
+        matches = data[field] >= value
+    elif op == "<=":
+        matches = data[field] <= value
+    elif op == "==":
+        matches = data[field] == value
+    elif op == "!=":
+        matches = data[field] != value
+    else: # catch invalid operation codes
+        raise Exception("Invalid comparison operator. Only >, <, >=, <=, ==, != allowed.")
+    
+    # filter data and outcomes
+    data = data[matches].reset_index(drop = True)
+    return data
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+def survival_stats(data, outcomes, key, filters=[]):
+    """
+    Print out selected statistics regarding survival, given a feature of
+    interest and any number of filters (including no filters).
+    """
+
+    # Check that the key exists
+    if key not in data.columns.values:
+        print("'{}' is not a feature of the Titanic data. Did you spell something wrong?".format(key))
+        return False
+
+    # Return before visualizing if feature is not suitable
+    if key in ['Cabin', 'PassengerId', 'Ticket']:
+        print("'{}' has too many unique categories to display! Try a different feature.".format(key))
+        return False
+
+    # Ensure 'outcomes' is a DataFrame with 'Survived' as column name
+    if isinstance(outcomes, pd.Series):
+        outcomes = outcomes.to_frame(name='Survived')
+    elif 'Survived' not in outcomes.columns:
+        outcomes.columns = ['Survived']
+
+    # Merge data and outcomes into a single DataFrame
+    all_data = pd.concat([data, outcomes], axis=1)
+
+    # Apply filters to data
+    for condition in filters:
+        all_data = filter_data(all_data, condition)
+
+    # Create outcomes DataFrame with selected key
+    all_data = all_data[[key, 'Survived']]
+
+    # Create plotting figure
+    plt.figure(figsize=(8, 6))
+
+    # Numerical features
+    if key in ['Age', 'Fare']:
+        # Remove NaN values
+        all_data = all_data[~np.isnan(all_data[key])]
+
+        # Define bins
+        if key == 'Fare':
+            bins = np.arange(0, all_data['Fare'].max() + 20, 20)
+        elif key == 'Age':
+            bins = np.arange(0, all_data['Age'].max() + 10, 10)
+
+        # Get values by survival
+        nonsurv_vals = all_data[all_data['Survived'] == 0][key].reset_index(drop=True)
+        surv_vals = all_data[all_data['Survived'] == 1][key].reset_index(drop=True)
+
+        # Plot histograms
+        plt.hist(nonsurv_vals, bins=bins, alpha=0.6, color='red', label='Did not survive')
+        plt.hist(surv_vals, bins=bins, alpha=0.6, color='green', label='Survived')
+        plt.xlim(0, bins.max())
+        plt.legend(framealpha=0.8)
+
+    # Categorical features
+    else:
+        # Define categories
+        if key == 'Pclass':
+            values = np.arange(1, 4)
+        elif key in ['Parch', 'SibSp']:
+            values = np.arange(0, np.max(data[key]) + 1)
+        elif key == 'Embarked':
+            values = ['C', 'Q', 'S']
+        elif key == 'Sex':
+            values = ['male', 'female']
+        else:
+            values = all_data[key].unique()
+
+        # Create DataFrame for survival counts
+        frame = pd.DataFrame(index=np.arange(len(values)), columns=[key, 'Survived', 'NSurvived'])
+
+        for i, value in enumerate(values):
+            frame.loc[i] = [
+                value,
+                len(all_data[(all_data['Survived'] == 1) & (all_data[key] == value)]),
+                len(all_data[(all_data['Survived'] == 0) & (all_data[key] == value)])
+            ]
+
+        # Set bar width
+        bar_width = 0.4
+
+        # Plot bars
+        for i in np.arange(len(frame)):
+            nonsurv_bar = plt.bar(i - bar_width, int(frame.loc[i]['NSurvived']), width=bar_width, color='r')
+            surv_bar = plt.bar(i, int(frame.loc[i]['Survived']), width=bar_width, color='g')
+
+        plt.xticks(np.arange(len(frame)), values)
+        plt.legend((nonsurv_bar[0], surv_bar[0]), ('Did not survive', 'Survived'), framealpha=0.8)
+
+    # Common plot formatting
+    plt.xlabel(key)
+    plt.ylabel('Number of Passengers')
+    plt.title("Passenger Survival Statistics With '{}' Feature".format(key))
+    plt.show()
+
+    # Report number of passengers with missing values
+    if all_data[key].isnull().sum():
+        nan_outcomes = all_data[all_data[key].isnull()]['Survived']
+        print("Passengers with missing '{}' values: {} ({} survived, {} did not survive)".format(
+            key, len(nan_outcomes), sum(nan_outcomes == 1), sum(nan_outcomes == 0)
+        ))
