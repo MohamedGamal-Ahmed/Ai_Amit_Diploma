@@ -29,5 +29,6 @@
     "Codegeex.Chat.LanguagePreference": "English",
     "Codegeex.Comment.LanguagePreference": "English",
     "Codegeex.CommitMessage.LanguagePreference": "English",
-    "Codegeex.GenerationPreference": "automatic"
+    "Codegeex.GenerationPreference": "automatic",
+    "zencoder.enableCodeLenses": false
 }
