@@ -1,6 +1,6 @@
 import tkinter as tk  # Import tkinter for GUI
-from sklearn.linear_model import LinearRegression  # Import LinearRegression model
-import numpy as np  # Import numpy for numerical operations
+# from sklearn.linear_model import LinearRegression  # Import LinearRegression model
+# import numpy as np  # Import numpy for numerical operations
 
 class SalaryPredictionApp:
     def __init__(self, root):
@@ -8,11 +8,8 @@ class SalaryPredictionApp:
         self.root.title("AMIT - Machine Learning Diploma")
         self.root.geometry("500x400")
 
-        # Train the model with data
-        X_train = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).reshape(-1, 1)
-        y_train = np.array([30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000])
-        self.model = LinearRegression()
-        self.model.fit(X_train, y_train)
+        
+    
 
         self.create_widgets()
 
@@ -52,8 +49,9 @@ class SalaryPredictionApp:
     def predict_salary(self):
         try:
             experience = float(self.experience_entry.get())
-            predicted_salary = self.model.predict(np.array([[experience]]))[0]
-            self.result_label.config(text=f"Your Expected Salary is: {int(predicted_salary)}", fg="green")
+            
+            predicted_salary = 9356.8 * experience + 26089
+            self.result_label.config(text=f"Your Expected Salary is: ${predicted_salary:,.2f}", fg="green")
         except ValueError:
             self.result_label.config(text="Please enter a valid number", fg="red")
 
