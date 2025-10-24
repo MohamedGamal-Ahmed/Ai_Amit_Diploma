@@ -1,0 +1,319 @@
+{
+  "LoginPage": {
+    "Login_Feature": {
+      "positive": [
+        {
+          "test_id": "TC_LOGIN_001",
+          "description": "تسجيل دخول صحيح ببيانات صحيحة",
+          "steps": [
+            "الانتقال إلى صفحة تسجيل الدخول",
+            "إدخال اسم المستخدم الصحيح",
+            "إدخال كلمة المرور الصحيحة",
+            "النقر على زر تسجيل الدخول",
+            "التحقق من الانتقال إلى لوحة التحكم"
+          ],
+          "expected_result": "يتم تسجيل الدخول بنجاح والانتقال إلى لوحة التحكم",
+          "test_data": {
+            "username": "valid_username",
+            "password": "valid_password"
+          },
+          "severity": "critical",
+          "priority": "high"
+        },
+        {
+          "test_id": "TC_LOGIN_002",
+          "description": "تسجيل دخول مع تذكرني مفعل",
+          "steps": [
+            "الانتقال إلى صفحة تسجيل الدخول",
+            "إدخال بيانات تسجيل الدخول الصحيحة",
+            "تفعيل خيار تذكرني",
+            "النقر على زر تسجيل الدخول",
+            "إغلاق المتصفح وإعادة فتحه",
+            "التحقق من بقاء تسجيل الدخول"
+          ],
+          "expected_result": "يتم تسجيل الدخول مع تفعيل خيار تذكرني",
+          "test_data": {
+            "username": "valid_username",
+            "password": "valid_password",
+            "remember_me": true
+          },
+          "severity": "normal",
+          "priority": "medium"
+        }
+      ],
+      "negative": [
+        {
+          "test_id": "TC_LOGIN_003",
+          "description": "تسجيل دخول بكلمة مرور خاطئة",
+          "steps": [
+            "الانتقال إلى صفحة تسجيل الدخول",
+            "إدخال اسم مستخدم صحيح",
+            "إدخال كلمة مرور خاطئة",
+            "النقر على زر تسجيل الدخول",
+            "التحقق من ظهور رسالة خطأ"
+          ],
+          "expected_result": "ظهور رسالة خطأ تفيد بكلمة المرور الخاطئة",
+          "test_data": {
+            "username": "valid_username",
+            "password": "invalid_password"
+          },
+          "severity": "critical",
+          "priority": "high"
+        },
+        {
+          "test_id": "TC_LOGIN_004",
+          "description": "تسجيل دخول بحقول فارغة",
+          "steps": [
+            "الانتقال إلى صفحة تسجيل الدخول",
+            "ترك حقل اسم المستخدم فارغ",
+            "ترك حقل كلمة المرور فارغ",
+            "النقر على زر تسجيل الدخول",
+            "التحقق من ظهور رسائل التحقق"
+          ],
+          "expected_result": "ظهور رسائل تحقق تفيد بضرورة ملء الحقول",
+          "test_data": {
+            "username": "",
+            "password": ""
+          },
+          "severity": "normal",
+          "priority": "medium"
+        },
+        {
+          "test_id": "TC_LOGIN_005",
+          "description": "تسجيل دخول بحساب غير موجود",
+          "steps": [
+            "الانتقال إلى صفحة تسجيل الدخول",
+            "إدخال اسم مستخدم غير موجود",
+            "إدخال كلمة مرور عشوائية",
+            "النقر على زر تسجيل الدخول",
+            "التحقق من ظهور رسالة خطأ"
+          ],
+          "expected_result": "ظهور رسالة خطأ تفيد بعدم وجود الحساب",
+          "test_data": {
+            "username": "nonexistent_user",
+            "password": "random_password"
+          },
+          "severity": "normal",
+          "priority": "medium"
+        }
+      ]
+    }
+  },
+  "RegistrationPage": {
+    "Registration_Feature": {
+      "positive": [
+        {
+          "test_id": "TC_REG_001",
+          "description": "تسجيل حساب جديد ببيانات صحيحة",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "إدخال الاسم الأول",
+            "إدخال الاسم الأخير",
+            "إدخال بريد إلكتروني صحيح",
+            "إدخال رقم هاتف صحيح",
+            "إدخال العنوان",
+            "إدخال كلمة مرور قوية",
+            "تأكيد كلمة المرور",
+            "الموافقة على الشروط والأحكام",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من نجاح التسجيل"
+          ],
+          "expected_result": "يتم إنشاء الحساب بنجاح والانتقال إلى صفحة التأكيد",
+          "test_data": {
+            "first_name": "generated",
+            "last_name": "generated",
+            "email": "generated",
+            "phone": "generated",
+            "address": "generated",
+            "password": "Test123456",
+            "confirm_password": "Test123456",
+            "terms_accepted": true
+          },
+          "severity": "critical",
+          "priority": "high"
+        },
+        {
+          "test_id": "TC_REG_002",
+          "description": "تسجيل حساب مع الاشتراك في النشرة الإخبارية",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "ملء جميع البيانات المطلوبة",
+            "تفعيل خيار الاشتراك في النشرة الإخبارية",
+            "الموافقة على الشروط والأحكام",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من نجاح التسجيل"
+          ],
+          "expected_result": "يتم إنشاء الحساب مع الاشتراك في النشرة الإخبارية",
+          "test_data": {
+            "first_name": "generated",
+            "last_name": "generated",
+            "email": "generated",
+            "phone": "generated",
+            "address": "generated",
+            "password": "Test123456",
+            "confirm_password": "Test123456",
+            "terms_accepted": true,
+            "newsletter_subscription": true
+          },
+          "severity": "normal",
+          "priority": "medium"
+        }
+      ],
+      "negative": [
+        {
+          "test_id": "TC_REG_003",
+          "description": "تسجيل حساب ببريد إلكتروني غير صحيح",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "إدخال بيانات صحيحة عدا البريد الإلكتروني",
+            "إدخال بريد إلكتروني غير صحيح",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من ظهور رسالة خطأ"
+          ],
+          "expected_result": "ظهور رسالة خطأ تفيد بخطأ في تنسيق البريد الإلكتروني",
+          "test_data": {
+            "first_name": "generated",
+            "last_name": "generated",
+            "email": "invalid_email_format",
+            "phone": "generated",
+            "address": "generated",
+            "password": "Test123456",
+            "confirm_password": "Test123456",
+            "terms_accepted": true
+          },
+          "severity": "normal",
+          "priority": "medium"
+        },
+        {
+          "test_id": "TC_REG_004",
+          "description": "تسجيل حساب برقم هاتف غير صحيح",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "إدخال بيانات صحيحة عدا رقم الهاتف",
+            "إدخال رقم هاتف غير صحيح",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من ظهور رسالة خطأ"
+          ],
+          "expected_result": "ظهور رسالة خطأ تفيد بخطأ في رقم الهاتف",
+          "test_data": {
+            "first_name": "generated",
+            "last_name": "generated",
+            "email": "generated",
+            "phone": "123",
+            "address": "generated",
+            "password": "Test123456",
+            "confirm_password": "Test123456",
+            "terms_accepted": true
+          },
+          "severity": "normal",
+          "priority": "medium"
+        },
+        {
+          "test_id": "TC_REG_005",
+          "description": "تسجيل حساب بكلمة مرور ضعيفة",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "إدخال بيانات صحيحة عدا كلمة المرور",
+            "إدخال كلمة مرور ضعيفة",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من ظهور رسالة خطأ"
+          ],
+          "expected_result": "ظهور رسالة خطأ تفيد بضعف كلمة المرور",
+          "test_data": {
+            "first_name": "generated",
+            "last_name": "generated",
+            "email": "generated",
+            "phone": "generated",
+            "address": "generated",
+            "password": "123",
+            "confirm_password": "123",
+            "terms_accepted": true
+          },
+          "severity": "normal",
+          "priority": "medium"
+        },
+        {
+          "test_id": "TC_REG_006",
+          "description": "تسجيل حساب بدون الموافقة على الشروط",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "ملء جميع البيانات المطلوبة",
+            "عدم الموافقة على الشروط والأحكام",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من ظهور رسالة خطأ"
+          ],
+          "expected_result": "ظهور رسالة خطأ تفيد بضرورة الموافقة على الشروط",
+          "test_data": {
+            "first_name": "generated",
+            "last_name": "generated",
+            "email": "generated",
+            "phone": "generated",
+            "address": "generated",
+            "password": "Test123456",
+            "confirm_password": "Test123456",
+            "terms_accepted": false
+          },
+          "severity": "normal",
+          "priority": "medium"
+        },
+        {
+          "test_id": "TC_REG_007",
+          "description": "تسجيل حساب بحقول فارغة",
+          "steps": [
+            "الانتقال إلى صفحة التسجيل",
+            "ترك جميع الحقول فارغة",
+            "النقر على زر إنشاء الحساب",
+            "التحقق من ظهور رسائل التحقق"
+          ],
+          "expected_result": "ظهور رسائل تحقق تفيد بضرورة ملء جميع الحقول",
+          "test_data": {
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "phone": "",
+            "address": "",
+            "password": "",
+            "confirm_password": "",
+            "terms_accepted": false
+          },
+          "severity": "normal",
+          "priority": "low"
+        }
+      ]
+    }
+  },
+  "HomePage": {
+    "Navigation_Feature": {
+      "positive": [
+        {
+          "test_id": "TC_HOME_001",
+          "description": "التحقق من تحميل الصفحة الرئيسية",
+          "steps": [
+            "الانتقال إلى الصفحة الرئيسية",
+            "التحقق من ظهور العنوان الرئيسي",
+            "التحقق من ظهور القائمة الرئيسية",
+            "التحقق من ظهور أقسام الخدمات"
+          ],
+          "expected_result": "تحميل الصفحة الرئيسية بنجاح مع ظهور جميع العناصر",
+          "test_data": {},
+          "severity": "critical",
+          "priority": "high"
+        },
+        {
+          "test_id": "TC_HOME_002",
+          "description": "الانتقال إلى صفحة تسجيل الدخول من الصفحة الرئيسية",
+          "steps": [
+            "الانتقال إلى الصفحة الرئيسية",
+            "النقر على رابط تسجيل الدخول",
+            "التحقق من الانتقال إلى صفحة تسجيل الدخول"
+          ],
+          "expected_result": "الانتقال بنجاح إلى صفحة تسجيل الدخول",
+          "test_data": {},
+          "severity": "normal",
+          "priority": "medium"
+        }
+      ],
+      "negative": []
+    }
+  }
+}
