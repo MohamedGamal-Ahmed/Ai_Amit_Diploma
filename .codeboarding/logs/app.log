@@ -1,0 +1,13 @@
+2025-10-03 08:27:25 WARNING  [utils:47] STATIC_ANALYSIS_CONFIG environment variable is not set, using default VSCode Setup.
+2025-10-03 08:27:26 WARNING  [utils:47] STATIC_ANALYSIS_CONFIG environment variable is not set, using default VSCode Setup.
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:59] Found: ProgrammingLanguage(language=Batch, size=39, percentage=0.4187694620423064, suffixes=['.bat'])
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:59] Found: ProgrammingLanguage(language=HTML, size=42, percentage=0.45098249758402237, suffixes=['.html'])
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:59] Found: ProgrammingLanguage(language=JSON, size=245, percentage=2.630731235906797, suffixes=['.json'])
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:62] Added ProgrammingLanguage(language=JSON, size=245, percentage=2.630731235906797, suffixes=['.json'])
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:59] Found: ProgrammingLanguage(language=JSX, size=43, percentage=0.46172017609792765, suffixes=['.jsx'])
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:59] Found: ProgrammingLanguage(language=Python, size=8944, percentage=96.03779662836894, suffixes=['.py'])
+2025-10-03 08:27:26 INFO     [static_analyzer.scanner:62] Added ProgrammingLanguage(language=Python, size=8944, percentage=96.03779662836894, suffixes=['.py'])
+2025-10-03 08:27:26 WARNING  [static_analyzer:16] Unsupported programming language: JSON. Skipping.
+2025-10-03 08:27:26 INFO     [diagram_analysis.diagram_generator:189] Starting static analysis for Python in c:\Users\Mgama\Ai_Amit_Diploma
+2025-10-03 08:27:26 INFO     [static_analyzer.lsp_client.client:69] Starting server c:\Users\Mgama\.vscode\extensions\codeboarding.codeboarding-0.2.6\bin\win\py-lsp --stdio...
+2025-10-03 08:27:26 INFO     [static_analyzer.lsp_client.client:156] Initializing connection for python...
